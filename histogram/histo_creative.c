@@ -60,7 +60,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
+#include "num_threads.h"
 typedef enum {
   eBlackAndWhite,
   eGrayScale8,
@@ -83,7 +83,7 @@ typedef tImage *pImage;
 
 unsigned char **read_img(char *filename, int *row, int *col, int *imgtype) {
   char mw[5];
-  char str[10];
+  char str[20];
   int com;
   unsigned char **image;
   int i, j, maxint;
@@ -392,10 +392,8 @@ long *histogram(char *fn_input) {
 
   /* obtain histogram from image, repeated 100 times */
   for (m = 0; m < 100; m++) {
-    // #pragma omp parallel for collapse(2) num_threads(2) default(shared)
-    // private(i,j) reduction(+:histo[:256])
     long histo_private[256] = {0};
-#pragma omp parallel firstprivate(histo_private) shared(histo) num_threads(8)
+#pragma omp parallel firstprivate(histo_private) shared(histo) num_threads(NUM_THREADS)
     {
 #pragma omp for private(i, j)
       for (i = 0; i < image->row; i++) {
