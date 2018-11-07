@@ -95,7 +95,6 @@ int hypre_CSRMatrixMatvec(double alpha, hypre_CSRMatrix *A, hypre_Vector *x,
    *-----------------------------------------------------------------------*/
 
   if (alpha == 0.0) {
-#pragma omp parallel for private(i) num_threads(NUM_THREADS)
     for (i = 0; i < num_rows * num_vectors; i++) // reduction
       y_data[i] *= beta;
     return ierr;
@@ -108,14 +107,12 @@ int hypre_CSRMatrixMatvec(double alpha, hypre_CSRMatrix *A, hypre_Vector *x,
   temp = beta / alpha; // =0atom-ide-diagnostics
 
   if (temp != 1.0) {
-#pragma omp parallel num_threads(NUM_THREADS)
     {
       if (temp == 0.0) {
-#pragma omp for private(i)
+#pragma omp parallel for private(i) num_threads(NUM_THREADS)
         for (i = 0; i < num_rows * num_vectors; i++) //
           y_data[i] = 0.0;
       } else {
-#pragma omp for private(i)
         for (i = 0; i < num_rows * num_vectors; i++)
           y_data[i] *= temp;
       }
@@ -130,7 +127,6 @@ int hypre_CSRMatrixMatvec(double alpha, hypre_CSRMatrix *A, hypre_Vector *x,
    * than num_rows */
 
   if (num_rownnz < xpar * (num_rows)) {
-#pragma omp parallel for private(i, jj, j, m, tempx) num_threads(NUM_THREADS)
     for (i = 0; i < num_rownnz; i++) {
       m = A_rownnz[i];
       /*
@@ -146,7 +142,6 @@ int hypre_CSRMatrixMatvec(double alpha, hypre_CSRMatrix *A, hypre_Vector *x,
         }
         y_data[m] = tempx;
       } else
-#pragma omp parallel for private(j, tempx, jj) num_threads(NUM_THREADS)
         for (j = 0; j < num_vectors; ++j) {
           tempx = y_data[j * vecstride_y + m * idxstride_y];
           for (jj = A_i[m]; jj < A_i[m + 1]; jj++) {
@@ -184,7 +179,6 @@ int hypre_CSRMatrixMatvec(double alpha, hypre_CSRMatrix *A, hypre_Vector *x,
    *-----------------------------------------------------------------*/
 
   if (alpha != 1.0) {
-#pragma omp parallel for default(shared) private(i) num_threads(NUM_THREADS)
     for (i = 0; i < num_rows * num_vectors; i++)
       y_data[i] *= alpha;
   }

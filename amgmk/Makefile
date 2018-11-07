@@ -12,8 +12,8 @@ CFLAGS   = -O3 -fopenmp -c
 
 LDFLAGS  = -O3 -fopenmp -lm
 
-LIBS     =
-LIB_DIRS =
+LIBS     = -ltimer
+LIB_DIRS = -L.
 
 PROG     = AMGMk AMGMk_original
 
@@ -32,10 +32,10 @@ OBJS_ORIGINAL     = main.o \
 all : $(PROG)
 
 AMGMk : $(OBJS)
-	$(LDR)  $(LDFLAGS) -o AMGMk $(OBJS) $(LIB_DIRS) $(LIBS)
+	$(LDR)  $(LDFLAGS) -o AMGMk $(OBJS) $(LIB_DIRS) $(LIBS) -no-pie
 
 AMGMk_original : $(OBJS_ORIGINAL)
-		$(LDR)  $(LDFLAGS) -o AMGMk_original $(OBJS_ORIGINAL) $(LIB_DIRS) $(LIBS)
+		$(LDR)  $(LDFLAGS) -o AMGMk_original $(OBJS_ORIGINAL) $(LIB_DIRS) $(LIBS) -no-pie
 
 
 clean :

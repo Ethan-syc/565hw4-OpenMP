@@ -14,7 +14,9 @@
 #include <stdlib.h>
 
 #include "headers.h"
-
+extern void Timer_Start(char *);
+extern void Timer_Stop(char *);
+extern void Timer_Print();
 //
 const int testIter = 1000;
 double totalWallTime = 0.0;
@@ -96,7 +98,7 @@ int main(int argc, char *argv[]) {
   del_wtime = t1 - t0;
 
   printf("\nTotal Wall time = %f seconds. \n", del_wtime);
-
+  Timer_Print();
   return 0;
 }
 
